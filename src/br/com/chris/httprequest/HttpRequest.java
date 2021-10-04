@@ -163,6 +163,8 @@ public class HttpRequest implements Runnable {
 			return "image/jpeg";
 		if (fileName.endsWith(".mp3"))
 			return "audio/mp3";
+		if (fileName.endsWith(".mp4"))
+			return "video/mp4";
 		
 		return "application/octet-stream";
 	}
