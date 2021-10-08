@@ -17,18 +17,25 @@ public class HttpRequest implements Runnable {
 		try {
 			processRequest();
 		}catch(Exception e){
-			System.out.println(e);
+			e.printStackTrace();
+			//System.out.println(e);
 		}
 	}
 	
 	private void processRequest () throws Exception {
 		// Pega a referência do input do socket e o fluxo de saída
 		InputStream inpStream = socket.getInputStream();
-		DataOutputStream outpStream = new DataOutputStream(socket.getOutputStream());
+		
+		if (!(inpStream.available() > 0) || !(socket.isConnected())) {
+			socket.close();
+			return;
+        }
+		
+		DataOutputStream outpStream = new DataOutputStream(socket.getOutputStream()); 
 		
 		// Filtros do fluxo de entrada
 		
-		BufferedReader buffReader = new BufferedReader(new InputStreamReader(inpStream)); 
+		BufferedReader buffReader = new BufferedReader(new InputStreamReader(inpStream));
 		
 		// Pega a linha inicial (Request-line) da mensagem da requisição HTTP
 		String requestLine = buffReader.readLine();
@@ -42,7 +49,7 @@ public class HttpRequest implements Runnable {
 		
 		// Será zero quando a última linha que termina o header for lida
 		while((headerLine = buffReader.readLine()).length() != 0) {
-			System.out.println(headerLine);	
+			System.out.println(headerLine);
 		}
 		
 		// Fechando os fluxos e conexão com o socket

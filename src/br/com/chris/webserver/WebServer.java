@@ -1,9 +1,11 @@
 package br.com.chris.webserver;
 
 import br.com.chris.httprequest.*;
+
 import java.io.*;
 import java.net.*;
-import java.util.*;
+import java.util.concurrent.*;
+
 
 /**
  *
@@ -14,6 +16,7 @@ public class WebServer {
     public static void main(String[] args) throws Exception {
         // Set the port number
         int porta = 3000;
+        ExecutorService threadPool = Executors.newFixedThreadPool(10);
         
         // Cria o listener do socket
         try (ServerSocket ss = new ServerSocket(porta)) {
@@ -27,11 +30,8 @@ public class WebServer {
                 // Cria o objeto que irá processar a mensagem da requisicao HTTP
                 HttpRequest request = new HttpRequest(clientSocket);
                 
-                // Cria a thread que irá processar a requisição
-                Thread thread = new Thread(request);
-                
-                // Inicia
-                thread.start();
+                // Cria a thread que irá processar a requisição           
+                threadPool.execute(request);
 
             }
         } catch (IOException ex) {
